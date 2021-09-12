@@ -9,6 +9,7 @@ import (
 
 	"github.com/TechBowl-japan/go-stations/db"
 	"github.com/TechBowl-japan/go-stations/handler"
+	"github.com/TechBowl-japan/go-stations/service"
 )
 
 func main() {
@@ -53,14 +54,15 @@ func realMain() error {
 	mux := http.NewServeMux()
 
 	mux.Handle("/", &HelloHandler{})
-	mux.Handle("/healthz", &handler.HealthzHandler{})
+	mux.Handle("/healthz", handler.NewHealthzHandler())
+	mux.Handle("/todos", handler.NewTODOHandler(service.NewTODOService(todoDB)))
 
-	// TODO: ここから実装を行う
 	http.ListenAndServe(port, mux)
 
 	return nil
 }
 
+// HelloHandler is struct
 type HelloHandler struct{}
 
 func (h *HelloHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {

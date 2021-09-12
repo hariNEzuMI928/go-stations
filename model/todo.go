@@ -5,7 +5,7 @@ import "time"
 type (
 	// A TODO expresses ...
 	TODO struct {
-		ID          int       `json:"id"`
+		ID          int64     `json:"id"`
 		Subject     string    `json:"subject"`
 		Description string    `json:"description"`
 		CreatedAt   time.Time `json:"created_at"`
@@ -13,26 +13,27 @@ type (
 	}
 
 	// A CreateTODORequest expresses ...
-	CreateTODORequest struct{
-		TODO `json:"todo"`
+	CreateTODORequest struct {
+		Subject     string `json:"subject"`
+		Description string `json:"description"`
 	}
 	// A CreateTODOResponse expresses ...
-	CreateTODOResponse struct{
-		TODO `json:"todo"`
+	CreateTODOResponse struct {
+		Todo TODO `json:"todo"`
 	}
 
 	// A ReadTODORequest expresses ...
-	ReadTODORequest struct{TODO}
+	ReadTODORequest struct{ TODO }
 	// A ReadTODOResponse expresses ...
-	ReadTODOResponse struct{TODO}
+	ReadTODOResponse struct{ TODO }
 
 	// A UpdateTODORequest expresses ...
-	UpdateTODORequest struct{TODO}
+	UpdateTODORequest struct{ TODO }
 	// A UpdateTODOResponse expresses ...
-	UpdateTODOResponse struct{TODO}
+	UpdateTODOResponse struct{ TODO }
 
 	// A DeleteTODORequest expresses ...
-	DeleteTODORequest struct{TODO}
+	DeleteTODORequest struct{ TODO }
 	// A DeleteTODOResponse expresses ...
-	DeleteTODOResponse struct{TODO}
+	DeleteTODOResponse struct{ TODO }
 )
