@@ -13,7 +13,9 @@ type (
 	}
 
 	// A CreateTODORequest expresses ...
-	CreateTODORequest struct{TODO}
+	CreateTODORequest struct{
+		TODO `json:"todo"`
+	}
 	// A CreateTODOResponse expresses ...
 	CreateTODOResponse struct{
 		TODO `json:"todo"`
