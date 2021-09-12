@@ -28,7 +28,7 @@ func (h *TODOHandler) Create(ctx context.Context, req *model.CreateTODORequest) 
 		return nil, err
 	}
 
-	return &model.CreateTODOResponse{Todo: *res}, nil
+	return &model.CreateTODOResponse{TODO: *res}, nil
 }
 
 // Read handles the endpoint that reads the TODOs.
