@@ -1,12 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"time"
 
 	"github.com/TechBowl-japan/go-stations/db"
+	"github.com/TechBowl-japan/go-stations/handler"
 )
 
 func main() {
@@ -50,7 +52,17 @@ func realMain() error {
 	// set http handlers
 	mux := http.NewServeMux()
 
+	mux.Handle("/", &HelloHandler{})
+	mux.Handle("/healthz", &handler.HealthzHandler{})
+
 	// TODO: ここから実装を行う
+	http.ListenAndServe(port, mux)
 
 	return nil
+}
+
+type HelloHandler struct{}
+
+func (h *HelloHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Hello World!")
 }
