@@ -69,7 +69,23 @@ func (h *TODOHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 		res, err := h.Create(r.Context(), &req)
 		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		json.NewEncoder(w).Encode(res)
+	case http.MethodPut:
+		req := model.UpdateTODORequest{}
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			return
+		}
+		if req.Subject == "" || req.ID == 0 {
 			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		res, err := h.Update(r.Context(), &req)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
