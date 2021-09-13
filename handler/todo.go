@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"errors"
 
 	"github.com/TechBowl-japan/go-stations/model"
 	"github.com/TechBowl-japan/go-stations/service"
@@ -54,8 +55,8 @@ func (h *TODOHandler) Update(ctx context.Context, req *model.UpdateTODORequest) 
 
 // Delete handles the endpoint that deletes the TODOs.
 func (h *TODOHandler) Delete(ctx context.Context, req *model.DeleteTODORequest) (*model.DeleteTODOResponse, error) {
-	_ = h.svc.DeleteTODO(ctx, nil)
-	return &model.DeleteTODOResponse{}, nil
+	err := h.svc.DeleteTODO(ctx, req.IDs)
+	return &model.DeleteTODOResponse{}, err
 }
 
 // ServeHTTP implements http.Handler interface.
@@ -113,6 +114,27 @@ func (h *TODOHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 		res, err := h.Update(r.Context(), &req)
 		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		json.NewEncoder(w).Encode(res)
+	case http.MethodDelete:
+		req := model.DeleteTODORequest{}
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			return
+		}
+
+		if len(req.IDs) == 0 {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		res, err := h.Delete(r.Context(), &req)
+		if errors.Is(err, &model.ErrNotFound{}) {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		} else if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}

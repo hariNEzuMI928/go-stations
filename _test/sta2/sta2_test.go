@@ -48,7 +48,7 @@ func TestStation2(t *testing.T) {
 		}
 	}()
 
-	want := http.StatusNotFound
+	want := 200
 	if resp.StatusCode != want {
 		t.Errorf("期待していない HTTP Status Code です, got = %d, want = %d", resp.StatusCode, want)
 		return
