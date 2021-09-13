@@ -1,0 +1,10 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "go-stations_sqlite3",
+            "database": "${workspaceFolder:go-stations}/.sqlite3/todo.db"
+        }
+    ]
+}

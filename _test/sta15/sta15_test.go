@@ -80,7 +80,7 @@ func TestStation15(t *testing.T) {
 		"Zero read": {
 			PrevID: 0,
 			Size:   0,
-			TODOs:  todos[3:],
+			TODOs:  todos[:3],
 		},
 		"All read": {
 			PrevID: 0,

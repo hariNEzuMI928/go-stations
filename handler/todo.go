@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/TechBowl-japan/go-stations/model"
 	"github.com/TechBowl-japan/go-stations/service"
@@ -33,8 +34,12 @@ func (h *TODOHandler) Create(ctx context.Context, req *model.CreateTODORequest) 
 
 // Read handles the endpoint that reads the TODOs.
 func (h *TODOHandler) Read(ctx context.Context, req *model.ReadTODORequest) (*model.ReadTODOResponse, error) {
-	_, _ = h.svc.ReadTODO(ctx, 0, 0)
-	return &model.ReadTODOResponse{}, nil
+	res, err := h.svc.ReadTODO(ctx, req.PrevID, req.Size)
+	if err != nil {
+		return &model.ReadTODOResponse{}, err
+	}
+
+	return &model.ReadTODOResponse{TODOs: res}, nil
 }
 
 // Update handles the endpoint that updates the TODO.
@@ -58,6 +63,29 @@ func (h *TODOHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	switch r.Method {
+	case http.MethodGet:
+		req := model.ReadTODORequest{}
+		var err error
+
+		req.PrevID, err = strconv.ParseInt(r.URL.Query().Get("prev_id"), 10, 64)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		req.Size, err = strconv.ParseInt(r.URL.Query().Get("size"), 10, 64)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		res, err := h.Read(r.Context(), &req)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		json.NewEncoder(w).Encode(res)
 	case http.MethodPost:
 		req := model.CreateTODORequest{}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
